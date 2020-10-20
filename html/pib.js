@@ -6,7 +6,7 @@ let ega = ["#000000", "#0000aa", "#00aa00", "#00aaaa", "#aa0000", "#aa00aa", "#a
 let pallet = [];
 let drawing = [];
 let boxWidth = boxHeight = 40;
-//let refreshTimer = window.setInterval(serverGetJson, 2000); // timer get data from server
+let refreshTimer = window.setInterval(serverGetJson, 1000); // timer get data from server
 class Bit {
   constructor(x, y, color) {
     this.x = x;
@@ -23,7 +23,7 @@ class Bit {
         } else {
           this.color = colorSelection;
           this.draw(context);
-        //  serverWriteJson(drawing);
+          serverWriteJson(drawing);
         }
       }
     })
@@ -46,7 +46,7 @@ function init() {
   for (let i = 0; i < 0x10; i++) {
     let numOnRow = 2;
     let bitWidth = boxWidth;
-    let x = 10*boxWidth + (i % numOnRow) * bitWidth;//pallet starts at position 11 
+    let x = 10*boxWidth + (i % numOnRow) * bitWidth;//pallet starts at position 11
     let y = Math.floor(i / numOnRow) * bitWidth;
     let bit = new Bit(x, y, i);
     bit.colorBit = true;
@@ -69,7 +69,13 @@ function init() {
 function readJson(jsonString) {
   jsonObj = JSON.parse(jsonString);
   // hier komt jouw code
+  for (i = 0; i < 80; i++) {
+    drawing[i].x = jsonObj[i].x;
+    drawing[i].y = jsonObj[i].y;
+    drawing[i].color = jsonObj[i].color;
+    drawing[i].draw(context);
   }
+}
 
 init();
-
+document.getElementById('logo').addEventListener('click', preload);

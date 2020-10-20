@@ -1,6 +1,6 @@
-let controlScript = "jsonWrite.php";
-let jsonFile = "drawing.json";
-let preloadJsonFile = "preload.json";
+let controlScript = "html/jsonWrite.php";
+let jsonFile = "html/drawing.json";
+let preloadJsonFile = "html/preload.json";
 
 function makeAjaxCall(url, methodType){
    let promiseObj = new Promise(function(resolve, reject){
@@ -33,13 +33,25 @@ function errorHandler(statusCode){
   }
 
 function serverWriteJson(data){
-    // hier komt jouw code
+    // hier komt jouw code jsonWrite.php
+    let drawingJsonString = JSON.stringify(data)
+    , url = controlScript + "?put=" + drawingJsonString;
+    //console.log(url); // debug
+    makeAjaxCall(url, 'GET');
   }
 
 function serverGetJson(){
   // hier komt jouw code
-}
+  makeAjaxCall(jsonFile, 'POST').then(readJson);
+  }
 
 function preload() {
   // hier komt jouw code
-}
+  clearInterval(refreshTimer);
+  makeAjaxCall(preloadJsonFile, 'POST').then(preinit);
+  function preinit(predata) {
+        readJson(predata);
+        serverWriteJson(drawing);
+        refreshTimer = window.setInterval(serverGetJson, 1000);
+    }
+  }
